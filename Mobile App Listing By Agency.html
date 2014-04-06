@@ -950,11 +950,12 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
 	}
 	$('#progressbar').progressbar({value: false});
 	$.ajax({
-		url: 'http://apps.usa.gov/apps-gallery/api/registrations.json?sort=Name',
+		url: 'http://apps.usa.gov/apps-gallery/api/registrations.json?Language=English&Language=EN&sort=Name',
 		dataType: 'jsonp',
 		jsonp: '_callback',
 		jsonpCallback: 'displayApps'
 	});
 </script>
+    </div></div></div>
 </body>
 </html>
