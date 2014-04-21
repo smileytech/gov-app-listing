@@ -52,14 +52,16 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
 
 <!--end gsaText_common_banner mobile-->
 <style type="text/css">
-	table {
-		font-size: 80%;
-		border-collapse:collapse;
-	}
-	td {
-		border-top: thin black solid;
-		border-bottom: thin black solid;
-	}
+    a.androidapp {
+        background-image: url(http://apps.usa.gov/resources/images/and16.png);
+        background-repeat: no-repeat;
+        padding: 0 0 0 17px;
+    }
+    a.iosapp {
+        background-image: url(http://apps.usa.gov/resources/images/app16.png);
+        padding: 0 0 0 18px;
+        background-repeat: no-repeat;
+    }
 </style>
 </head>
 
@@ -956,11 +958,18 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
         $('.appDescription').html(appCode);
     }
 	function generateAppLink(app) {
-        var appLink = "";
-        appLink += '<li>'+app.Name+' (';
+        var appLink = '';
+        appLink += '<li role="option listitem" class="option" tabindex="-1">'+app.Name+' (';
         for (var j=0; j<app.Version_Details.length; j++) {
             var appDetails = app.Version_Details[j];
-            appLink += '<a href="'+ appDetails.Store_Url + '">' + appDetails.Platform + '</a>';
+            var platformClass = '';
+            if (appDetails.Platform == 'iOS') {
+                platformClass = 'iosapp';
+            }
+            else if (appDetails.Platform == 'Android') {
+                platformClass = 'androidapp';
+            }
+            appLink += '<a href="'+ appDetails.Store_Url + '"class="' + platformClass + '">' + appDetails.Platform + '</a>';
             if (j != app.Version_Details.length - 1) {
                 appLink += ', ';
             }
@@ -1002,6 +1011,8 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
                 $('#appslist').append('<h2 class="section_title"><a id="'+currentLetter + '">' + currentLetter + '</a></h2>');
             }
             agencies[name] += '</ul></div>';
+            var newul = '<ul id="list-'+(parseInt(i)+1)+'" tabindex="-1" role="listbox" aria-expanded="true">';
+            agencies[name] = agencies[name].replace(/<ul>/g,newul);
             $('#appslist').append(agencies[name]);
         }
         var azListCode = '<ul>';
@@ -1053,6 +1064,8 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
                 $('#appslist').append('<h2 class="section_title"><a id="'+currentLetter + '">' + currentLetter + '</a></h2>');
             }
             topics[name] += '</ul></div>';
+            var newul = '<ul id="list-'+(parseInt(i)+1)+'" tabindex="-1" role="listbox" aria-expanded="true">';
+            topics[name] = topics[name].replace(/<ul>/g,newul);
             $('#appslist').append(topics[name]);
         }
         var azListCode = '<ul>';
