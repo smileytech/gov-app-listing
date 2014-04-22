@@ -943,7 +943,7 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
         var app = apps[randomIndex];
         var appCode = '';
         $('.appTitle').html('<span>'+app.Name+'</span>');
-        appCode += '<img src="'+app.Icon+'" alt="" />';
+        appCode += '<img src="'+app.Icon+'" alt="" width="100" height="100" />';
         appCode += '<p>'+app.Short_Description+'</p>';
         appCode += '<a href="' + app.Version_Details[0].Store_Url + '">';
         appCode += '<div class="app-button-container"><div class="redbutton">Download '+app.Name+'</div>';
