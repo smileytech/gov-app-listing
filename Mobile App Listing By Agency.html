@@ -658,20 +658,26 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
         <div class="component clearfix">
             <div class="boxcontainer" id="sortoptions" style="display: none">
                 <!-- TOC Box Start-->
-                <h2>Sort Apps By</h2>
+                <h2>Show Apps By</h2>
 
                 <div class="boxin clearfix">
                     <ul class="two_column_bullet">
                         <li>
-                            <a class="summary_link" id="sortByAgency" href="#">View Apps by Source Agency</a>
+                            <a class="summary_link" id="sortByAgency" href="#">View All Apps by Source Agency</a>
                         </li>
                         <li>
-                            <a class="summary_link" id="sortByPlatform" href="#">View Apps by Mobile Platform</a>
+                            <a class="summary_link" id="showIos" href="#">View Only iOS Apps</a>
+                        </li>
+                        <li>
+                            <a class="summary_link" id="showMobileWeb" href="#">View Only Mobile Websites</a>
                         </li>
                     </ul>
                     <ul class="two_column_bullet">
                         <li>
-                            <a class="summary_link" id="sortByTopic" href="#">View Apps by Topic</a>
+                            <a class="summary_link" id="sortByTopic" href="#">View All Apps by Topic</a>
+                        </li>
+                        <li>
+                            <a class="summary_link" id="showAndroid" href="#">View Only Android Apps</a>
                         </li>
                     </ul>
                     <!-- TOC Box End-->
@@ -681,23 +687,7 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
       <div class="azlist"></div>
       <div id="appslist"></div>
       <div class="azlist"></div>
-        <div class="component clearfix platformsort" style="display: none">
-            <h2>iOS Applications</h2>
-            <ul id="iosapps">
-            </ul>
-        </div>
-
-        <div class="component clearfix platformsort" style="display: none">
-            <h2>Android Applications</h2>
-            <ul id="androidapps">
-            </ul>
-        </div>
-
-        <div class="component clearfix platformsort" style="display: none">
-            <h2>Mobile Websites</h2>
-            <ul id="mobilesites">
-            </ul>
-        </div>
+      <p class="volver clearfix" style="display:block"><a href="#skiplink">Back to Top</a></p>
       
       <!-- end gsalinklist_cmp_onecol_bullet mobile-->
       
@@ -916,11 +906,17 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
        });
        $('#sortByTopic').click(function() {
             sortAppsByTopic(data.results);
-        });
-        $('#sortByPlatform').click(function() {
-            sortAppsByPlatform(data.results);
-        })
-        $('#sortoptions').show();
+       });
+       $('#showIos').click(function() {
+           sortAppsByPlatform(data.results,'iOS');
+       });
+       $('#showAndroid').click(function() {
+           sortAppsByPlatform(data.results,'Android');
+       });
+       $('#showMobileWeb').click(function() {
+           sortAppsByPlatform(data.results,'Mobile Web');
+       });
+       $('#sortoptions').show();
     }
     function AZListLetter(letter) {
         this.letter = letter;
@@ -940,9 +936,6 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
         $('.platformsort').hide();
         $('.azlist').html("");
         $('#appslist').html("");
-        $('#androidapps').html("");
-        $('#iosapps').html("");
-        $('#mobilesites').html("");
     }
     function generateRandomAppBox(apps) {
         var randomIndex = Math.floor(Math.random()*apps.length);
@@ -1076,42 +1069,24 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
         $('.azlist').addClass('a-z_list').append(azListCode);
         $('.a-z_list ul li').css('marginRight','12px');
     }
-    function sortAppsByPlatform(apps) {
+    function sortAppsByPlatform(apps, platform) {
         resetPage();
-        var iosapps = '';
-        var androidapps = '';
-        var mobilesites = '';
+        var applinks = '<ul id="list-1" tabindex="-1" role="listbox" aria-expanded="true">';
         for (var i=0; i<apps.length; i++) {
             var app = apps[i];
             for (var j=0; j<app.Version_Details.length; j++) {
                 var version = app.Version_Details[j];
-                if (version.Platform == 'iOS') {
-                    iosapps += '<li><a href="';
-                    iosapps += version.Store_Url;
-                    iosapps += '">';
-                    iosapps += app.Name;
-                    iosapps += '</a></li>';
-                }
-                else if (version.Platform == 'Android') {
-                    androidapps += '<li><a href="';
-                    androidapps += version.Store_Url;
-                    androidapps += '">';
-                    androidapps += app.Name;
-                    androidapps += '</a></li>';
-                }
-                else {
-                    mobilesites += '<li><a href="';
-                    mobilesites += version.Store_Url;
-                    mobilesites += '">';
-                    mobilesites += app.Name;
-                    mobilesites += '</a></li>';
+                if (version.Platform == platform) {
+                    applinks += '<li><a href="';
+                    applinks += version.Store_Url;
+                    applinks += '">';
+                    applinks += app.Name;
+                    applinks += '</a></li>';
                 }
             }
         }
-        $('#iosapps').html(iosapps);
-        $('#androidapps').html(androidapps);
-        $('#mobilesites').html(mobilesites);
-        $('.platformsort').show();
+        applinks += '</ul>'
+        $('#appslist').html(applinks);
     }
     function displayApps(d) {
         data = d;
