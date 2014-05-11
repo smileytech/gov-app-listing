@@ -62,6 +62,15 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
         padding: 0 0 0 18px;
         background-repeat: no-repeat;
     }
+    #zero {
+        font-size: 70%;
+        text-decoration: none;
+        color: #2D5B8A;
+    }
+    .activesort {
+        font-weight: bold;
+        text-decoration: none;;
+    }
 </style>
 </head>
 
@@ -900,43 +909,31 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
       <!--String which replaces is = $string_2-->
       <p class="info"> USA.gov is the U.S. government's official web portal. </p>
 <script type="text/javascript">
-    function showSortOptions() {
-       $('#sortByAgency').click(function(){
-            sortAppsByAgency(data.results);
-       });
-       $('#sortByTopic').click(function() {
-            sortAppsByTopic(data.results);
-       });
-       $('#showIos').click(function() {
-           sortAppsByPlatform(data.results,'iOS');
-       });
-       $('#showAndroid').click(function() {
-           sortAppsByPlatform(data.results,'Android');
-       });
-       $('#showMobileWeb').click(function() {
-           sortAppsByPlatform(data.results,'Mobile Web');
-       });
-       $('#sortoptions').show();
-    }
+    var azList = new Object();
+    var data;
+
     function AZListLetter(letter) {
         this.letter = letter;
         this.code = '<li>'+letter+'</li>';
     }
-    var azList = new Object();
-    var data;
+
     function initAZList() {
         var i=0;
+        azList['0'] = new AZListLetter('0-9');
         for (i=0; i<26; i++) {
             var char = String.fromCharCode(65+i);
             var letter = new AZListLetter(char);
             azList[char] = letter;
         }
     }
+
     function resetPage() {
         $('.platformsort').hide();
         $('.azlist').html("");
         $('#appslist').html("");
+        $('#sortoptions a').removeClass('activesort');
     }
+
     function generateRandomAppBox(apps) {
         var randomIndex = Math.floor(Math.random()*apps.length);
         randomIndex--;
@@ -950,6 +947,7 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
         appCode += '</a>';
         $('.appDescription').html(appCode);
     }
+
 	function generateAppLink(app) {
         var appLink = '';
         appLink += '<li role="option listitem" class="option" tabindex="-1">'+app.Name+' (';
@@ -970,129 +968,133 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
         appLink += ')</li>';
         return appLink;
     }
-    function sortAppsByAgency(apps) {
-        resetPage();
-        initAZList();
-        var agencies = new Object();
-        var agenciesNames = new Array();
-        for (var i=0; i<apps.length; i++) {
-            var app = apps[i];
-            if (!('Agency' in app)) {
-                app.agencyName = 'Other';
-            }
-            else {
-                app.agencyName = app.Agency[0].Name;
-            }
-            if (!(app.agencyName in agencies)) {
-                agencies[app.agencyName] = '<div class="component"><h3>'+app.agencyName+'</h3><ul>';
-                agenciesNames.push(app.agencyName);
-            }
-            agencies[app.agencyName] += generateAppLink(app);
-        }
-        agenciesNames.sort();
-        var currentLetter = '0';
-        var backToTop = '<p class="volver clearfix" style="display:block"><a href="#skiplink">Back to Top</a></p>';
-        for (var i in agenciesNames) {
-            var name = agenciesNames[i];
-            var firstLetter = name.charAt(0).toUpperCase();
-            if (currentLetter != firstLetter) {
-                if (currentLetter != '0') {
-                    $('#appslist').append(backToTop);
+
+    function sortAppsIntoBuckets(apps, sortfunction, idToMakeActive) {
+       var platformFilter = arguments[3];
+       $('#appslist').fadeOut(400, function() {
+            resetPage();
+            initAZList();
+            var buckets = new Object();
+            var bucketNames = new Array();
+            for (var i=0; i<apps.length; i++) {
+                var app = apps[i];
+                app.Name = $.trim(app.Name);
+                if (!('Agency' in app)) {
+                    app.agencyName = 'Other';
                 }
-                currentLetter = firstLetter;
-                azList[currentLetter].code = '<li><a href="#'+currentLetter+'">'+currentLetter+'</a></li>';
-                $('#appslist').append('<h2 class="section_title"><a id="'+currentLetter + '">' + currentLetter + '</a></h2>');
+                else {
+                    app.agencyName = app.Agency[0].Name;
+                }
+                if (platformFilter) {
+                    sortfunction(app,platformFilter,buckets,bucketNames);
+                }
+                else {
+                    sortfunction(app,buckets,bucketNames);
+                }
             }
-            agencies[name] += '</ul></div>';
-            var newul = '<ul id="list-'+(parseInt(i)+1)+'" tabindex="-1" role="listbox" aria-expanded="true">';
-            agencies[name] = agencies[name].replace(/<ul>/g,newul);
-            $('#appslist').append(agencies[name]);
-        }
-        var azListCode = '<ul>';
-        for (var i in azList) {
-            azListCode += azList[i].code;
-        }
-        azListCode += '</ul>';
-        $('.azlist').addClass('a-z_list').append(azListCode);
-        $('.a-z_list ul li').css('marginRight','12px');
-    }
-    function sortAppsByTopic(apps) {
-        resetPage();
-        initAZList();
-        var topics = new Object();
-        var topicNames = new Array();
-        for (var i=0; i<apps.length; i++) {
-            var app = apps[i];
-            if (!('Agency' in app)) {
-                app.agencyName = 'Other';
-            }
-            else {
-                app.agencyName = app.Agency[0].Name;
-            }
-            for (var j=0; j<app.Meta_Details[0].Category.length; j++) {
-                var topicName = app.Meta_Details[0].Category[j];
-                topicName = topicName.charAt(0).toUpperCase() + topicName.substr(1);
-                var firstLetter = topicName.charAt(0).toUpperCase();
-                if (firstLetter >= "A" && firstLetter <= "Z") { //skip categories that don't start with a letter (won't work with diacritics)
-                    if (!(topicName in topics)) {
-                        topics[topicName] = '<div class="component"><h3>'+topicName+'</h3><ul>';
-                        topicNames.push(topicName);
+            bucketNames.sort();
+            var currentLetter = '-1';
+            var backToTop = '<p class="volver clearfix" style="display:block"><a href="#skiplink">Back to Top</a></p>';
+            for (var i in bucketNames) {
+                var name = bucketNames[i];
+                var firstLetter = name.charAt(0).toUpperCase();
+                if (currentLetter != firstLetter) {
+                    if (currentLetter != '-1') {
+                        $('#appslist').append(backToTop);
                     }
-                    topics[topicName] += generateAppLink(app);
+                    currentLetter = firstLetter;
+                    if (currentLetter != '0') {
+                        azList[currentLetter].code = '<li><a href="#'+currentLetter+'">'+currentLetter+'</a></li>';
+                        $('#appslist').append('<h2 class="section_title"><a id="'+currentLetter + '">' + currentLetter + '</a></h2>');
+                    }
+                    else {
+                        azList[currentLetter].code = '<li><a href="#zero">0-9</a></li>';
+                        $('#appslist').append('<h2 class="section_title"><a id="zero">0-9</a></h2>');
+                    }
+
                 }
+                buckets[name] += '</ul></div>';
+                var newul = '<ul id="list-'+(parseInt(i)+1)+'" tabindex="-1" role="listbox" aria-expanded="true">';
+                buckets[name] = buckets[name].replace(/<ul>/g,newul);
+                $('#appslist').append(buckets[name]);
             }
-        }
-        topicNames.sort();
-        var currentLetter = '0';
-        var backToTop = '<p class="volver clearfix" style="display:block"><a href="#skiplink">Back to Top</a></p>';
-        for (var i in topicNames) {
-            var name = topicNames[i];
-            var firstLetter = name.charAt(0).toUpperCase();
-            if (currentLetter != firstLetter) {
-                if (currentLetter != '0') {
-                    $('#appslist').append(backToTop);
-                }
-                currentLetter = firstLetter;
-                azList[currentLetter].code = '<li><a href="#'+currentLetter+'">'+currentLetter+'</a></li>';
-                $('#appslist').append('<h2 class="section_title"><a id="'+currentLetter + '">' + currentLetter + '</a></h2>');
+            var azListCode = '<ul>';
+            for (var i in azList) {
+                azListCode += azList[i].code;
             }
-            topics[name] += '</ul></div>';
-            var newul = '<ul id="list-'+(parseInt(i)+1)+'" tabindex="-1" role="listbox" aria-expanded="true">';
-            topics[name] = topics[name].replace(/<ul>/g,newul);
-            $('#appslist').append(topics[name]);
-        }
-        var azListCode = '<ul>';
-        for (var i in azList) {
-            azListCode += azList[i].code;
-        }
-        azListCode += '</ul>';
-        $('.azlist').addClass('a-z_list').append(azListCode);
-        $('.a-z_list ul li').css('marginRight','12px');
+            azListCode += '</ul>';
+            $('.azlist').addClass('a-z_list').append(azListCode);
+            $('.a-z_list ul li').css('marginRight','12px');
+           $('#appslist').fadeIn(400);
+           $(idToMakeActive).addClass('activesort');
+       });
     }
-    function sortAppsByPlatform(apps, platform) {
-        resetPage();
-        var applinks = '<ul id="list-1" tabindex="-1" role="listbox" aria-expanded="true">';
-        for (var i=0; i<apps.length; i++) {
-            var app = apps[i];
-            for (var j=0; j<app.Version_Details.length; j++) {
-                var version = app.Version_Details[j];
-                if (version.Platform == platform) {
-                    applinks += '<li><a href="';
-                    applinks += version.Store_Url;
-                    applinks += '">';
-                    applinks += app.Name;
-                    applinks += '</a></li>';
+
+    function sortAppsByTopicFunction(app, topics, topicNames) {
+        for (var j=0; j<app.Meta_Details[0].Category.length; j++) {
+            var topicName = app.Meta_Details[0].Category[j];
+            topicName = topicName.charAt(0).toUpperCase() + topicName.substr(1);
+            var firstLetter = topicName.charAt(0).toUpperCase();
+            if (firstLetter >= "A" && firstLetter <= "Z") { //skip categories that don't start with a letter (won't work with diacritics)
+                if (!(topicName in topics)) {
+                    topics[topicName] = '<div class="component"><h3>'+topicName+'</h3><ul>';
+                    topicNames.push(topicName);
                 }
+                topics[topicName] += generateAppLink(app);
             }
         }
-        applinks += '</ul>'
-        $('#appslist').html(applinks);
     }
+
+    function sortAppsByAgencyFunction(app, agencies, agenciesNames) {
+        if (!(app.agencyName in agencies)) {
+            agencies[app.agencyName] = '<div class="component"><h3>'+app.agencyName+'</h3><ul>';
+            agenciesNames.push(app.agencyName);
+        }
+        agencies[app.agencyName] += generateAppLink(app);
+    }
+
+    function sortAppsByPlatformFunction(app, platform, appListing, appFirstLetters) {
+        for (var j=0; j<app.Version_Details.length; j++) {
+            var version = app.Version_Details[j];
+            if (version.Platform == platform) {
+                var firstLetter = app.Name.charAt(0).toUpperCase();
+                if (! (firstLetter >= "A" && firstLetter <= "Z")) {
+                    firstLetter = '0';
+                }
+                if (!(firstLetter in appListing)) {
+                    appListing[firstLetter] = '';
+                    appFirstLetters.push(firstLetter);
+                }
+                appListing[firstLetter] += generateAppLink(app);
+                break;
+            }
+        }
+    }
+
+    function showSortOptions() {
+        $('#sortByAgency').click(function(){
+            sortAppsIntoBuckets(data.results, sortAppsByAgencyFunction, '#sortByAgency');
+        });
+        $('#sortByTopic').click(function() {
+            sortAppsIntoBuckets(data.results, sortAppsByTopicFunction, '#sortByTopic');
+        });
+        $('#showIos').click(function() {
+            sortAppsIntoBuckets(data.results, sortAppsByPlatformFunction, '#showIos', 'iOS');
+        });
+        $('#showAndroid').click(function() {
+            sortAppsIntoBuckets(data.results, sortAppsByPlatformFunction, '#showAndroid', 'Android');
+        });
+        $('#showMobileWeb').click(function() {
+            sortAppsIntoBuckets(data.results, sortAppsByPlatformFunction, '#showMobileWeb', 'Mobile Web');
+        });
+        $('#sortoptions').show();
+    }
+
     function displayApps(d) {
         data = d;
         $('#progressbar').progressbar('destroy');
         generateRandomAppBox(data.results);
-        sortAppsByAgency(data.results);
+        sortAppsIntoBuckets(data.results, sortAppsByAgencyFunction, '#sortByAgency');
         showSortOptions();
 	}
 	$('#progressbar').progressbar({value: false});
