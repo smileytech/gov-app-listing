@@ -1062,7 +1062,7 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
                     firstLetter = '0';
                 }
                 if (!(firstLetter in appListing)) {
-                    appListing[firstLetter] = '';
+                    appListing[firstLetter] = '<div class="component"><ul>';
                     appFirstLetters.push(firstLetter);
                 }
                 appListing[firstLetter] += generateAppLink(app);
