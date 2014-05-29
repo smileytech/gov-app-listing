@@ -69,11 +69,7 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
     }
     .activesort {
         font-weight: bold;
-        text-decoration: none;
-        cursor: default;
-    }
-    a[disabled='disabled']{
-      pointer-events:none;
+        text-decoration: none;;
     }
 </style>
 </head>
@@ -676,27 +672,21 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
                 <div class="boxin clearfix">
                     <ul class="two_column_bullet">
                         <li>
-                            <a class="summary_link" id="sortByAgency" href="#" aria-controls="appslist">View All Apps by Source Agency</a>
+                            <a class="summary_link" id="sortByAgency" href="#">View All Apps by Source Agency</a>
                         </li>
                         <li>
-                            <a class="summary_link" id="showIos" href="#" aria-controls="appslist">View Only iOS Apps</a>
+                            <a class="summary_link" id="showIos" href="#">View Only iOS Apps</a>
                         </li>
                         <li>
-                            <a class="summary_link" id="showBlackberry" href="#" aria-controls="appslist">View Only Blackberry Apps</a>
-                        </li>
-                        <li>
-                            <a class="summary_link" id="showMobileWeb" href="#" aria-controls="appslist">View Only Mobile Websites</a>
+                            <a class="summary_link" id="showMobileWeb" href="#">View Only Mobile Websites</a>
                         </li>
                     </ul>
                     <ul class="two_column_bullet">
                         <li>
-                            <a class="summary_link" id="sortByTopic" href="#" aria-controls="appslist">View All Apps by Topic</a>
+                            <a class="summary_link" id="sortByTopic" href="#">View All Apps by Topic</a>
                         </li>
                         <li>
-                            <a class="summary_link" id="showAndroid" href="#" aria-controls="appslist">View Only Android Apps</a>
-                        </li>
-                        <li>
-                            <a class="summary_link" id="showWindows" href="#" aria-controls="appslist">View Only Windows Apps</a>
+                            <a class="summary_link" id="showAndroid" href="#">View Only Android Apps</a>
                         </li>
                     </ul>
                     <!-- TOC Box End-->
@@ -704,7 +694,7 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
             </div>
         </div>
       <div class="azlist"></div>
-      <div role="region" id="appslist" aria-live="polite"></div>
+      <div id="appslist"></div>
       <div class="azlist"></div>
       <p class="volver clearfix" style="display:block"><a href="#skiplink">Back to Top</a></p>
       
@@ -942,7 +932,6 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
         $('.azlist').html("");
         $('#appslist').html("");
         $('#sortoptions a').removeClass('activesort');
-        $('#sortoptions a').attr('disabled', false);
     }
 
     function generateRandomAppBox(apps) {
@@ -966,16 +955,12 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
             var appDetails = app.Version_Details[j];
             var platformClass = '';
             if (appDetails.Platform == 'iOS') {
-                platformClass = 'iosapp ';
+                platformClass = 'iosapp';
             }
             else if (appDetails.Platform == 'Android') {
-                platformClass = 'androidapp ';
+                platformClass = 'androidapp';
             }
-            var deviceClass = '';
-            if (appDetails.Device[0] == 'Tablet') {
-                deviceClass = ' [Tablet]';
-            }
-            appLink += '<a href="'+ appDetails.Store_Url + '"class="' + platformClass + '">' + appDetails.Platform + deviceClass + '</a>';
+            appLink += '<a href="'+ appDetails.Store_Url + '"class="' + platformClass + '">' + appDetails.Platform + '</a>';
             if (j != app.Version_Details.length - 1) {
                 appLink += ', ';
             }
@@ -1042,7 +1027,6 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
             $('.a-z_list ul li').css('marginRight','12px');
            $('#appslist').fadeIn(400);
            $(idToMakeActive).addClass('activesort');
-           $(idToMakeActive).attr('disabled', true);
        });
     }
 
@@ -1100,28 +1084,32 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
         $('#showAndroid').click(function() {
             sortAppsIntoBuckets(data.results, sortAppsByPlatformFunction, '#showAndroid', 'Android');
         });
-        $('#showBlackberry').click(function() {
-            sortAppsIntoBuckets(data.results, sortAppsByPlatformFunction, '#showBlackberry', 'Blackberry');
-        });
-        $('#showWindows').click(function() {
-            sortAppsIntoBuckets(data.results, sortAppsByPlatformFunction, '#showWindows', 'Windows');
-        });
         $('#showMobileWeb').click(function() {
             sortAppsIntoBuckets(data.results, sortAppsByPlatformFunction, '#showMobileWeb', 'Mobile Web');
         });
         $('#sortoptions').show();
     }
 
+    function simpleDisplay(app) {
+        var applist="<ul>"
+        for (var j=0; j<app.length; j++) {
+            applist+=generateAppLink(app[j]);
+        }
+        appslist+="</ul>"
+        $('#appslist').html(applist);
+        $('#appslist').fadeIn(400);
+
+    }
     function displayApps(d) {
         data = d;
         $('#progressbar').progressbar('destroy');
         generateRandomAppBox(data.results);
-        sortAppsIntoBuckets(data.results, sortAppsByAgencyFunction, '#sortByAgency');
-        showSortOptions();
+
+        simpleDisplay(data.results);
 	}
 	$('#progressbar').progressbar({value: false});
 	$.ajax({
-		url: 'http://apps.usa.gov/apps-gallery/api/registrations.json?Language=English&Language=EN&sort=Name',
+		url: 'http://apps.usa.gov/apps-gallery/api/registrations.json?sort=Name&Language=Espa%C3%B1ol',
 		dataType: 'jsonp',
 		jsonp: '_callback',
 		jsonpCallback: 'displayApps'
