@@ -679,13 +679,13 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
                             <a class="summary_link" id="sortByAgency" href="#" aria-controls="appslist">View All Apps by Source Agency</a>
                         </li>
                         <li>
-                            <a class="summary_link" id="showIos" href="#" aria-controls="appslist">View Only iOS Apps</a>
+                            <a class="summary_link" id="showIos" href="#" aria-controls="appslist">View iOS Apps</a>
                         </li>
                         <li>
-                            <a class="summary_link" id="showBlackberry" href="#" aria-controls="appslist">View Only Blackberry Apps</a>
+                            <a class="summary_link" id="showBlackberry" href="#" aria-controls="appslist">View Blackberry Apps</a>
                         </li>
                         <li>
-                            <a class="summary_link" id="showMobileWeb" href="#" aria-controls="appslist">View Only Mobile Websites</a>
+                            <a class="summary_link" id="showMobileWeb" href="#" aria-controls="appslist">View Mobile Websites</a>
                         </li>
                     </ul>
                     <ul class="two_column_bullet">
@@ -693,10 +693,10 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
                             <a class="summary_link" id="sortByTopic" href="#" aria-controls="appslist">View All Apps by Topic</a>
                         </li>
                         <li>
-                            <a class="summary_link" id="showAndroid" href="#" aria-controls="appslist">View Only Android Apps</a>
+                            <a class="summary_link" id="showAndroid" href="#" aria-controls="appslist">View Android Apps</a>
                         </li>
                         <li>
-                            <a class="summary_link" id="showWindows" href="#" aria-controls="appslist">View Only Windows Apps</a>
+                            <a class="summary_link" id="showWindows" href="#" aria-controls="appslist">View Windows Apps</a>
                         </li>
                     </ul>
                     <!-- TOC Box End-->
@@ -959,7 +959,7 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
         $('.appDescription').html(appCode);
     }
 
-	function generateAppLink(app) {
+  function generateAppLink(app) {
         var appLink = '';
         appLink += '<li role="option listitem" class="option" tabindex="-1">'+app.Name+' (';
         for (var j=0; j<app.Version_Details.length; j++) {
@@ -981,6 +981,38 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
             }
         }
         appLink += ')</li>';
+        return appLink;
+    }
+  function generateAppLinkByPlatform(app, platform) {
+        var appLink = '';
+        appLink += '<li role="option listitem" class="option" tabindex="-1">'+app.Name+' (';
+        platformLinks='';
+        otherLinks='';
+        for (var j=0; j<app.Version_Details.length; j++) {
+            var appDetails = app.Version_Details[j];
+            var platformClass = '';
+            if (appDetails.Platform == 'iOS') {
+                platformClass = 'iosapp ';
+            }
+            else if (appDetails.Platform == 'Android') {
+                platformClass = 'androidapp ';
+            }
+            var deviceClass = '';
+            if (appDetails.Device[0] == 'Tablet') {
+                deviceClass = ' [Tablet]';
+            }
+            if(appDetails.Platform==platform){
+              if(platformLinks != '') platformLinks+=', '
+              platformLinks += '<a href="' + appDetails.Store_Url + '"class="' + platformClass + '">' + appDetails.Platform + deviceClass + '</a>';
+            }else{
+              if(otherLinks != '') otherLinks+=', '
+              otherLinks += '<a href="' + appDetails.Store_Url + '"class="' + platformClass + '">' + appDetails.Platform + deviceClass + '</a>';
+            }
+        }
+        if(otherLinks!=''){
+          platformLinks+=', '+otherLinks;
+        }
+        appLink += platformLinks + ')</li>';
         return appLink;
     }
 
@@ -1081,7 +1113,7 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
                     appListing[firstLetter] = '<div class="component"><ul>';
                     appFirstLetters.push(firstLetter);
                 }
-                appListing[firstLetter] += generateAppLink(app);
+                appListing[firstLetter] += generateAppLinkByPlatform(app, platform);
                 break;
             }
         }
