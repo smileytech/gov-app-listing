@@ -950,7 +950,7 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
 
 	function generateAppLink(app) {
         var appLink = '';
-        appLink += '<li role="option listitem" class="option" tabindex="-1">'+app.Name+' (';
+        appLink += '<li class="option">'+app.Name+' (';
         for (var j=0; j<app.Version_Details.length; j++) {
             var appDetails = app.Version_Details[j];
             var platformClass = '';
@@ -1014,7 +1014,7 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
 
                 }
                 buckets[name] += '</ul></div>';
-                var newul = '<ul id="list-'+(parseInt(i)+1)+'" tabindex="-1" role="listbox" aria-expanded="true">';
+                var newul = '<ul id="list-'+(parseInt(i)+1)+'" >';
                 buckets[name] = buckets[name].replace(/<ul>/g,newul);
                 $('#appslist').append(buckets[name]);
             }
