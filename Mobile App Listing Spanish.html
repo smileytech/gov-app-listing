@@ -660,44 +660,45 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
       <!-- Begin gsalinklist_cmp_onecol_bullet mobile--> 
       
       <!--ONE COLUMN BULLETS, MAIN-->
-      
-      <div class="component clearfix">
-		<div id="progressbar"></div>
-      </div>
-        <div class="component clearfix">
-            <div class="boxcontainer" id="sortoptions" style="display: none">
-                <!-- TOC Box Start-->
-                <h2>Show Apps By</h2>
+      <div class="dyncontent" tabindex="0" aria-live="polite" aria-atomic="true" aria-busy="true">
+          <div class="component clearfix">
+            <div id="progressbar"></div>
+          </div>
+            <div class="component clearfix">
+                <div class="boxcontainer" id="sortoptions" style="display: none">
+                    <!-- TOC Box Start-->
+                    <h2>Show Apps By</h2>
 
-                <div class="boxin clearfix">
-                    <ul class="two_column_bullet">
-                        <li>
-                            <a class="summary_link" id="sortByAgency" href="#">View All Apps by Source Agency</a>
-                        </li>
-                        <li>
-                            <a class="summary_link" id="showIos" href="#">View Only iOS Apps</a>
-                        </li>
-                        <li>
-                            <a class="summary_link" id="showMobileWeb" href="#">View Only Mobile Websites</a>
-                        </li>
-                    </ul>
-                    <ul class="two_column_bullet">
-                        <li>
-                            <a class="summary_link" id="sortByTopic" href="#">View All Apps by Topic</a>
-                        </li>
-                        <li>
-                            <a class="summary_link" id="showAndroid" href="#">View Only Android Apps</a>
-                        </li>
-                    </ul>
-                    <!-- TOC Box End-->
+                    <div class="boxin clearfix">
+                        <ul class="two_column_bullet">
+                            <li>
+                                <a class="summary_link" id="sortByAgency" href="#">View All Apps by Source Agency</a>
+                            </li>
+                            <li>
+                                <a class="summary_link" id="showIos" href="#">View Only iOS Apps</a>
+                            </li>
+                            <li>
+                                <a class="summary_link" id="showMobileWeb" href="#">View Only Mobile Websites</a>
+                            </li>
+                        </ul>
+                        <ul class="two_column_bullet">
+                            <li>
+                                <a class="summary_link" id="sortByTopic" href="#">View All Apps by Topic</a>
+                            </li>
+                            <li>
+                                <a class="summary_link" id="showAndroid" href="#">View Only Android Apps</a>
+                            </li>
+                        </ul>
+                        <!-- TOC Box End-->
+                    </div>
                 </div>
             </div>
-        </div>
-      <div class="azlist"></div>
-      <div id="appslist"></div>
-      <div class="azlist"></div>
-      <p class="volver clearfix" style="display:block"><a href="#skiplink">Back to Top</a></p>
-      
+
+          <div class="azlist"></div>
+          <div id="appslist"></div>
+          <div class="azlist"></div>
+          <p class="volver clearfix" style="display:block"><a href="#skiplink">Back to Top</a></p>
+      </div>
       <!-- end gsalinklist_cmp_onecol_bullet mobile-->
       
       <div class="clearfix"></div>
@@ -1027,6 +1028,7 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
             $('.a-z_list ul li').css('marginRight','12px');
            $('#appslist').fadeIn(400);
            $(idToMakeActive).addClass('activesort');
+
        });
     }
 
@@ -1092,19 +1094,18 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
 
     function simpleDisplay(app) {
         var applist="<ul>"
+        $('.dyncontent').attr('aria-busy','true');
         for (var j=0; j<app.length; j++) {
             applist+=generateAppLink(app[j]);
         }
         appslist+="</ul>"
         $('#appslist').html(applist);
         $('#appslist').fadeIn(400);
-
+        $('.dyncontent').removeAttr('aria-busy');
     }
     function displayApps(d) {
         data = d;
         $('#progressbar').progressbar('destroy');
-        generateRandomAppBox(data.results);
-
         simpleDisplay(data.results);
 	}
 	$('#progressbar').progressbar({value: false});
