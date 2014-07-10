@@ -664,48 +664,49 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
       <!-- Begin gsalinklist_cmp_onecol_bullet mobile--> 
       
       <!--ONE COLUMN BULLETS, MAIN-->
-      
-      <div class="component clearfix">
-		<div id="progressbar"></div>
-      </div>
-        <div class="component clearfix">
-            <div class="boxcontainer" id="sortoptions" style="display: none">
-                <!-- TOC Box Start-->
-                <h2>Show Apps By</h2>
+        <div class="dyncontent" tabindex="0" aria-live="polite" aria-atomic="true" aria-busy="true">
+            <div class="component clearfix">
+                <div class="boxcontainer" id="sortoptions" style="display: none">
+                    <!-- TOC Box Start-->
+                    <h2>Show Apps By</h2>
 
-                <div class="boxin clearfix">
-                    <ul class="two_column_bullet">
-                        <li>
-                            <a class="summary_link" id="sortByAgency" href="#" aria-controls="appslist">View All Apps by Source Agency</a>
-                        </li>
-                        <li>
-                            <a class="summary_link" id="showIos" href="#" aria-controls="appslist">View iOS Apps</a>
-                        </li>
-                        <li>
-                            <a class="summary_link" id="showBlackberry" href="#" aria-controls="appslist">View Blackberry Apps</a>
-                        </li>
-                        <li>
-                            <a class="summary_link" id="showMobileWeb" href="#" aria-controls="appslist">View Mobile Websites</a>
-                        </li>
-                    </ul>
-                    <ul class="two_column_bullet">
-                        <li>
-                            <a class="summary_link" id="sortByTopic" href="#" aria-controls="appslist">View All Apps by Topic</a>
-                        </li>
-                        <li>
-                            <a class="summary_link" id="showAndroid" href="#" aria-controls="appslist">View Android Apps</a>
-                        </li>
-                        <li>
-                            <a class="summary_link" id="showWindows" href="#" aria-controls="appslist">View Windows Apps</a>
-                        </li>
-                    </ul>
-                    <!-- TOC Box End-->
+                    <div class="boxin clearfix">
+                        <ul class="two_column_bullet">
+                            <li>
+                                <a class="summary_link" id="sortByAgency" href="#" aria-controls="appslist">View All Apps by Source Agency</a>
+                            </li>
+                            <li>
+                                <a class="summary_link" id="showIos" href="#" aria-controls="appslist">View iOS Apps</a>
+                            </li>
+                            <li>
+                                <a class="summary_link" id="showBlackberry" href="#" aria-controls="appslist">View Blackberry Apps</a>
+                            </li>
+                            <li>
+                                <a class="summary_link" id="showMobileWeb" href="#" aria-controls="appslist">View Mobile Websites</a>
+                            </li>
+                        </ul>
+                        <ul class="two_column_bullet">
+                            <li>
+                                <a class="summary_link" id="sortByTopic" href="#" aria-controls="appslist">View All Apps by Topic</a>
+                            </li>
+                            <li>
+                                <a class="summary_link" id="showAndroid" href="#" aria-controls="appslist">View Android Apps</a>
+                            </li>
+                            <li>
+                                <a class="summary_link" id="showWindows" href="#" aria-controls="appslist">View Windows Apps</a>
+                            </li>
+                        </ul>
+                        <!-- TOC Box End-->
+                    </div>
                 </div>
             </div>
+            <div class="component clearfix">
+                <div id="progressbar"></div>
+            </div>
+          <div class="azlist"></div>
+          <div role="region" id="appslist"></div>
+          <div class="azlist"></div>
         </div>
-      <div class="azlist"></div>
-      <div role="region" id="appslist" aria-live="polite"></div>
-      <div class="azlist"></div>
       <p class="volver clearfix" style="display:block"><a href="#skiplink">Back to Top</a></p>
       
       <!-- end gsalinklist_cmp_onecol_bullet mobile-->
@@ -1016,6 +1017,7 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
     }
 
     function sortAppsIntoBuckets(apps, sortfunction, idToMakeActive) {
+       $('.dyncontent').attr('aria-busy','true');
        var platformFilter = arguments[3];
        $('#appslist').fadeOut(400, function() {
             resetPage();
@@ -1074,6 +1076,7 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
            $('#appslist').fadeIn(400);
            $(idToMakeActive).addClass('activesort');
            $(idToMakeActive).attr('disabled', true);
+           $('.dyncontent').removeAttr('aria-busy');
        });
     }
 
