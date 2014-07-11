@@ -912,7 +912,7 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
 <script type="text/javascript">
     var azList = new Object();
     var data;
-
+    var linkCount = 0;
     function AZListLetter(letter) {
         this.letter = letter;
         this.code = '<li>'+letter+'</li>';
@@ -951,7 +951,8 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
 
 	function generateAppLink(app) {
         var appLink = '';
-        appLink += '<li class="option">'+app.Name+' (';
+        linkCount++;
+        appLink += '<li class="option"><span id="app'+linkCount+'">'+app.Name+'</span> (';
         for (var j=0; j<app.Version_Details.length; j++) {
             var appDetails = app.Version_Details[j];
             var platformClass = '';
@@ -961,7 +962,7 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
             else if (appDetails.Platform == 'Android') {
                 platformClass = 'androidapp';
             }
-            appLink += '<a href="'+ appDetails.Store_Url + '"class="' + platformClass + '">' + appDetails.Platform + '</a>';
+            appLink += '<a href="'+ appDetails.Store_Url + '"class="' + platformClass + '" aria-labelledby="app'+linkCount+'" aria-describedby="app'+linkCount+'">' + appDetails.Platform + '</a>';
             if (j != app.Version_Details.length - 1) {
                 appLink += ', ';
             }

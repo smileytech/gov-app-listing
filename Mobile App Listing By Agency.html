@@ -922,6 +922,7 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
 <script type="text/javascript">
     var azList = new Object();
     var data;
+    var linkCount = 0;
 
     function AZListLetter(letter) {
         this.letter = letter;
@@ -961,7 +962,8 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
 
   function generateAppLink(app) {
         var appLink = '';
-        appLink += '<li class="option">'+app.Name+' (';
+        linkCount++;
+        appLink += '<li class="option"><span id="app'+linkCount+'">'+app.Name+'</span> (';
         for (var j=0; j<app.Version_Details.length; j++) {
             var appDetails = app.Version_Details[j];
             var platformClass = '';
@@ -975,7 +977,7 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
             if (appDetails.Device[0] == 'Tablet') {
                 deviceClass = ' [Tablet]';
             }
-            appLink += '<a href="'+ appDetails.Store_Url + '"class="' + platformClass + '">' + appDetails.Platform + deviceClass + '</a>';
+            appLink += '<a href="'+ appDetails.Store_Url + '"class="' + platformClass + '" aria-labelledby="app'+linkCount+'" aria-describedby="app'+linkCount+'">' + appDetails.Platform + deviceClass + '</a>';
             if (j != app.Version_Details.length - 1) {
                 appLink += ', ';
             }
@@ -985,7 +987,8 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
     }
   function generateAppLinkByPlatform(app, platform) {
         var appLink = '';
-        appLink += '<li class="option">'+app.Name+' (';
+        linkCount++;
+        appLink += '<li class="option"><span id="app'+linkCount+'">'+app.Name+'</span> (';
         platformLinks='';
         otherLinks='';
         for (var j=0; j<app.Version_Details.length; j++) {
@@ -1003,10 +1006,10 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
             }
             if(appDetails.Platform==platform){
               if(platformLinks != '') platformLinks+=', '
-              platformLinks += '<a href="' + appDetails.Store_Url + '"class="' + platformClass + '">' + appDetails.Platform + deviceClass + '</a>';
+              platformLinks += '<a href="' + appDetails.Store_Url + '"class="' + platformClass + '" aria-labelledby="app'+linkCount+'" aria-describedby="app'+linkCount+'">' + appDetails.Platform + deviceClass + '</a>';
             }else{
               if(otherLinks != '') otherLinks+=', '
-              otherLinks += '<a href="' + appDetails.Store_Url + '"class="' + platformClass + '">' + appDetails.Platform + deviceClass + '</a>';
+              otherLinks += '<a href="' + appDetails.Store_Url + '"class="' + platformClass + '" aria-labelledby="app'+linkCount+'" aria-describedby="app'+linkCount+'">' + appDetails.Platform + deviceClass + '</a>';
             }
         }
         if(otherLinks!=''){
@@ -1018,6 +1021,7 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
 
     function sortAppsIntoBuckets(apps, sortfunction, idToMakeActive) {
        $('.dyncontent').attr('aria-busy','true');
+        linkCount = 0;
        var platformFilter = arguments[3];
        $('#appslist').fadeOut(400, function() {
             resetPage();
