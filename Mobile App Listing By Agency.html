@@ -75,11 +75,19 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
     a[disabled='disabled']{
       pointer-events:none;
     }
+    #appslist{
+      transition: all 1s;
+    }
+
+    #appslist.active{
+      background: rgb(255, 245, 92);
+      transition: all 0s;
+    }
 </style>
 </head>
 
 <body>
-<div id="skiplink" tabindex="-1"> <a href="#breadcrumbs_dl">Skip to Main Content</a> </div>
+<div id="skiplink" tabindex="-1"> <a href="#breadcrumbs_dl" onclick="document.getElementById('breadcrumbs_dl').focus();">Skip to Main Content</a> </div>
 <div class="top-hd clearfix" role="navigation"> 
   <!--start gsaCommonPage_topnavleft mobile-->
   <ul class="left">
@@ -673,27 +681,27 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
                     <div class="boxin clearfix">
                         <ul class="two_column_bullet">
                             <li>
-                                <a class="summary_link" id="sortByAgency" href="#" aria-controls="appslist">View All Apps by Source Agency</a>
+                                <a class="summary_link" id="sortByAgency" href="#focusable" aria-controls="appslist">View All Apps by Source Agency</a>
                             </li>
                             <li>
-                                <a class="summary_link" id="showIos" href="#" aria-controls="appslist">View iOS Apps</a>
+                                <a class="summary_link" id="showIos" href="#focusable" aria-controls="appslist">View iOS Apps</a>
                             </li>
                             <li>
-                                <a class="summary_link" id="showBlackberry" href="#" aria-controls="appslist">View Blackberry Apps</a>
+                                <a class="summary_link" id="showBlackberry" href="#focusable" aria-controls="appslist">View Blackberry Apps</a>
                             </li>
                             <li>
-                                <a class="summary_link" id="showMobileWeb" href="#" aria-controls="appslist">View Mobile Websites</a>
+                                <a class="summary_link" id="showMobileWeb" href="#focusable" aria-controls="appslist">View Mobile Websites</a>
                             </li>
                         </ul>
                         <ul class="two_column_bullet">
                             <li>
-                                <a class="summary_link" id="sortByTopic" href="#" aria-controls="appslist">View All Apps by Topic</a>
+                                <a class="summary_link" id="sortByTopic" href="#focusable" aria-controls="appslist">View All Apps by Topic</a>
                             </li>
                             <li>
-                                <a class="summary_link" id="showAndroid" href="#" aria-controls="appslist">View Android Apps</a>
+                                <a class="summary_link" id="showAndroid" href="#focusable" aria-controls="appslist">View Android Apps</a>
                             </li>
                             <li>
-                                <a class="summary_link" id="showWindows" href="#" aria-controls="appslist">View Windows Apps</a>
+                                <a class="summary_link" id="showWindows" href="#focusable" aria-controls="appslist">View Windows Apps</a>
                             </li>
                         </ul>
                         <!-- TOC Box End-->
@@ -703,7 +711,8 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
             <div class="component clearfix">
                 <div id="progressbar"></div>
             </div>
-          <div class="azlist"></div>
+          <h2 id="filter"></h2>
+          <div class="azlist" id="focusable" tabindex="0"></div>
           <div role="region" id="appslist"></div>
           <div class="azlist"></div>
         </div>
@@ -1078,9 +1087,14 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
             $('.azlist').addClass('a-z_list').append(azListCode);
             $('.a-z_list ul li').css('marginRight','12px');
            $('#appslist').fadeIn(400);
+
+            yellowFade();
            $(idToMakeActive).addClass('activesort');
            $(idToMakeActive).attr('disabled', true);
            $('.dyncontent').removeAttr('aria-busy');
+
+           $('#focusable').focus();
+           console.log("$('#focusable').focus();");
        });
     }
 
@@ -1124,28 +1138,40 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
             }
         }
     }
+    function yellowFade(){
+
+        $('#appslist').addClass('active');
+        setTimeout(function(){$('#appslist').removeClass('active');},500);
+    }
 
     function showSortOptions() {
         $('#sortByAgency').click(function(){
             sortAppsIntoBuckets(data.results, sortAppsByAgencyFunction, '#sortByAgency');
+            $('#filter').html('All Apps by Source Agency');
         });
         $('#sortByTopic').click(function() {
             sortAppsIntoBuckets(data.results, sortAppsByTopicFunction, '#sortByTopic');
+            $('#filter').html('All Apps By Topic');
         });
         $('#showIos').click(function() {
             sortAppsIntoBuckets(data.results, sortAppsByPlatformFunction, '#showIos', 'iOS');
+            $('#filter').html('iOS Apps');
         });
         $('#showAndroid').click(function() {
             sortAppsIntoBuckets(data.results, sortAppsByPlatformFunction, '#showAndroid', 'Android');
+            $('#filter').html('Android Apps');
         });
         $('#showBlackberry').click(function() {
             sortAppsIntoBuckets(data.results, sortAppsByPlatformFunction, '#showBlackberry', 'Blackberry');
+            $('#filter').html('Blackberry Apps');
         });
         $('#showWindows').click(function() {
             sortAppsIntoBuckets(data.results, sortAppsByPlatformFunction, '#showWindows', 'Windows');
+            $('#filter').html('Windows Apps');
         });
         $('#showMobileWeb').click(function() {
             sortAppsIntoBuckets(data.results, sortAppsByPlatformFunction, '#showMobileWeb', 'Mobile Web');
+            $('#filter').html('Mobile Web Apps');
         });
         $('#sortoptions').show();
     }
@@ -1156,6 +1182,7 @@ $('.mainmenu').find('h2 a').removeAttr('tabIndex');
         generateRandomAppBox(data.results);
         sortAppsIntoBuckets(data.results, sortAppsByAgencyFunction, '#sortByAgency');
         showSortOptions();
+        $('#filter').html('All Apps by Source Agency');
 	}
 	$('#progressbar').progressbar({value: false});
 	$.ajax({
